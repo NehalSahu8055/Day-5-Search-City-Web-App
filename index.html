@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="./" />
+
+    <title>Day 5 JS | Search City Web App</title>
+
+    <!-- tailwind cdn -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .suggestions li:nth-child(even) {
+        transform: perspective(100px) rotateX(3deg) translateY(2px) scale(1.001);
+      }
+
+      .suggestions li:nth-child(odd) {
+        transform: perspective(100px) rotateX(-3deg) translateY(3px);
+      }
+    </style>
+  </head>
+  <body class="bg-[url(./bg-image.png)]">
+    <button
+      class="absolute right-0 top-3 flex items-center justify-center rounded-bl-2xl rounded-tl-2xl bg-sky-400 px-2 py-1 font-semibold transition-all hover:pr-5 z-50"
+    >
+      <img src="js.svg" width="35" height="35" alt="" />&nbsp;Day 5
+    </button>
+    <form class="search-form max-w-[25rem] my-12 mx-auto flex flex-col">
+      <input
+        type="text"
+        class="search text-center w-[120%] left-[-10%] relative z-[2] text-[40px] shadow-[0_0_5px_rgba(0,0,0,0.12),inset_0_0_2px_rgba(0,0,0,0.19)] m-0 rounded-[5px] border-[10px] border-solid border-[#F7F7F7] top-2.5;"
+        placeholder="City or State"
+      />
+      <ul class="suggestions relative m-0 p-0 list-none">
+        <li
+          class="shadow-[0_0_10px_rgba(0,0,0,0.14)] bg-gradient-to-t from-[#ffffff_0%] to-[#efefef_100%] transition-[background] duration-[0.2s] flex justify-between capitalize m-0 p-5 border-b-[#D8D8D8] border-b border-solid bg-white"
+        >
+          Filter for a city
+        </li>
+        <li
+          class="shadow-[0_0_10px_rgba(0,0,0,0.14)] bg-gradient-to-b from-[#ffffff_0%] to-[#efefef_100%] transition-[background] duration-[0.2s] flex justify-between capitalize m-0 p-5 border-b-[#D8D8D8] border-b border-solid bg-white"
+        >
+          or a state
+        </li>
+      </ul>
+    </form>
+    <footer
+      class="font-semi-bold fixed bottom-0 left-0 rounded-tr-xl bg-sky-300 px-4 py-1 text-center text-black"
+    >
+      Made with ❤️ by Nehal.
+    </footer>
+    <script>
+      const endpoint =
+          "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json",
+        input = document.querySelector("input"),
+        suggestions = document.querySelector(".suggestions"),
+        cities = [];
+
+      // fetching data from external api
+      const fetchData = async () => {
+        let response = await fetch(endpoint);
+        let data = await response.json();
+        cities.push(...data);
+      };
+      fetchData();
+
+      // matching data with input data
+      const matchCity = (wordToMatch) => {
+        return cities.filter((item) => {
+          const regex = new RegExp(wordToMatch, "gi");
+          return item.city.match(regex) || item.state.match(regex);
+        });
+      };
+      function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+      // show data function
+      const showCity = () => {
+        const matchedCity = matchCity(input.value);
+        const html = matchedCity
+          .map((item) => {
+            const regex = new RegExp(input.value, "gi");
+            const city = item.city.replace(
+              regex,
+              `<span class="text-green-600 font-bold">${input.value}</span>`
+            );
+            const state = item.state.replace(
+              regex,
+              `<span class="text-green-600 font-bold">${input.value}</span>`
+            );
+
+            return `
+            <li
+              class="shadow-[0_0_10px_rgba(0,0,0,0.14)] bg-gradient-to-t from-[#ffffff_0%] to-[#efefef_100%] transition-[background] duration-[0.2s] flex justify-between capitalize m-0 p-5 border-b-[#D8D8D8] border-b border-solid bg-white"
+            >       
+                <span class="name">
+                  ${city}, ${state}
+                </span>
+                <span class="population text-sm">
+                  ${numberWithCommas(item.population)}
+                </span>
+              </li>
+              `;
+          })
+          .join("");
+
+        // writing to suggestions
+        suggestions.innerHTML = html;
+      };
+
+      input.addEventListener("change", showCity);
+      input.addEventListener("keyup", showCity);
+    </script>
+  </body>
+</html>
