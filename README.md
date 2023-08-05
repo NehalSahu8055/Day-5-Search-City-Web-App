@@ -3,7 +3,7 @@
 ### 🔗 Links
 
 - Solution URL: [Click here](https://github.com/NehalSahu8055/Day-5-Search-City-Web-App)
-- Live Site URL: [Click here]()
+- Live Site URL: [Click here](https://nehalsahu8055.github.io/Day-5-Search-City-Web-App/)
 
 ### 🛠️ Built with
 
